@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario de Inteligencia Artificial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+        }
+        .intro {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        .question-container {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .question {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .option {
+            display: flex;
+            align-items: flex-start;
+        }
+        .option input {
+            margin-top: 3px;
+            margin-right: 8px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        button {
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background-color: #3182ce;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2c5282;
+        }
+        .btn-primary:disabled {
+            background-color: #cbd5e0;
+            color: #718096;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            margin-right: 1rem;
+        }
+        .btn-secondary:hover {
+            background-color: #cbd5e0;
+        }
+        .results {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+        .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .review-container {
+            margin-top: 2rem;
+        }
+        .review-question {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .correct {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+        }
+        .incorrect {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+        }
+        .option-result {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        .option-correct {
+            background-color: #c6f6d5;
+            font-weight: 500;
+        }
+        .option-user-incorrect {
+            background-color: #fed7d7;
+        }
+        .feedback {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        .feedback-correct {
+            color: #38a169;
+        }
+        .feedback-incorrect {
+            color: #e53e3e;
+        }
+        .explanation {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f7fafc;
+            border-radius: 4px;
+            border-left: 3px solid #4299e1;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <footer style="text-align: center; position: fixed; bottom: 0; width: 100%; left: 0; padding: 10px; background-color: #f5f7fa; border-top: 1px solid #e2e8f0; font-size: 0.8rem; color: #718096;">
+        © 2025 Oohel Technologies y Prácticas
+    </footer>
+    <div id="app">
+        <h1>Cuestionario de Inteligencia Artificial</h1>
+        <div style="text-align: center; margin-bottom: 1rem; font-weight: 500; color: #4a5568;">
+            Oohel Technologies y Prácticas
+        </div>
+        
+        <!-- Pantalla inicial del cuestionario -->
+        <div id="quiz-screen">
+            <div class="intro">
+                <p>Este cuestionario contiene 20 preguntas sobre conceptos básicos y avanzados de Inteligencia Artificial.
+                   Selecciona una respuesta para cada pregunta y haz clic en "Enviar" para obtener tu calificación.</p>
+            </div>
+            
+            <div id="questions-container">
+                <!-- Las preguntas se cargarán aquí mediante JavaScript -->
+            </div>
+            
+            <div class="btn-container">
+                <button id="submit-btn" class="btn-primary" disabled>Enviar respuestas</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de resultados -->
+        <div id="results-screen" class="hidden">
+            <div class="results">
+                <h2>Resultado del cuestionario</h2>
+                <div id="score" class="score">0 / 10</div>
+                <p id="score-text">Has respondido correctamente 0 de 20 preguntas.</p>
+                
+                <div class="btn-container">
+                    <button id="show-answers-btn" class="btn-secondary">Ver respuestas correctas</button>
+                    <button id="retry-btn" class="btn-primary">Reintentar cuestionario</button>
+                </div>
+            </div>
+            
+            <div id="review-container" class="review-container hidden">
+                <h3>Revisión de respuestas</h3>
+                <!-- Los resultados detallados se cargarán aquí mediante JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos del cuestionario
+        const quizData = [
+            {
+                question: "¿Qué es la Inteligencia Artificial?",
+                options: [
+                    "a) Un software capaz de imitar completamente la inteligencia humana",
+                    "b) El estudio y desarrollo de sistemas computacionales que pueden realizar tareas que normalmente requieren inteligencia humana",
+                    "c) Un tipo específico de algoritmo matemático",
+                    "d) Una tecnología exclusivamente utilizada en robots"
+                ],
+                correctAnswer: "b) El estudio y desarrollo de sistemas computacionales que pueden realizar tareas que normalmente requieren inteligencia humana.",
+                explanation: "La IA es un campo amplio que busca desarrollar sistemas que pueden realizar tareas que normalmente requerirían inteligencia humana, como reconocimiento visual, toma de decisiones o comprensión del lenguaje."
+            },
+            {
+                question: "¿Qué distingue a la IA generativa de la IA tradicional?",
+                options: [
+                    "a) La IA generativa solo se usa para generar imágenes, mientras que la tradicional se usa para texto",
+                    "b) La IA generativa crea contenido nuevo (texto, imágenes, audio), mientras que la tradicional se enfoca en clasificar, predecir o reconocer patrones existentes",
+                    "c) La IA generativa es más antigua que la tradicional",
+                    "d) No hay diferencia real entre ambas"
+                ],
+                correctAnswer: "b) La IA generativa crea contenido nuevo (texto, imágenes, audio), mientras que la tradicional se enfoca en clasificar, predecir o reconocer patrones existentes.",
+                explanation: "La IA generativa crea contenido original que no existía previamente, mientras que la IA tradicional principalmente analiza, clasifica o hace predicciones sobre datos existentes."
+            },
+            {
+                question: "¿Qué son los tokens en el contexto de los modelos de lenguaje?",
+                options: [
+                    "a) Las unidades mínimas de procesamiento en las que se divide el texto (palabras, partes de palabras o caracteres)",
+                    "b) Los errores que comete un modelo durante el entrenamiento",
+                    "c) Las contraseñas para acceder a servicios de IA",
+                    "d) Los temas que un modelo puede comprender"
+                ],
+                correctAnswer: "a) Las unidades mínimas de procesamiento en las que se divide el texto (palabras, partes de palabras o caracteres).",
+                explanation: "Los tokens son las unidades básicas que un modelo de lenguaje procesa. Pueden ser palabras completas, partes de palabras o incluso caracteres individuales, dependiendo del modelo."
+            },
+            {
+                question: "¿Qué es un embedding en el contexto de la IA?",
+                options: [
+                    "a) Un tipo de criptografía para proteger datos",
+                    "b) Una representación numérica de palabras en un espacio multidimensional donde palabras semánticamente similares están cercanas",
+                    "c) Una técnica para insertar código malicioso en sistemas de IA",
+                    "d) El proceso de integrar múltiples modelos en uno solo"
+                ],
+                correctAnswer: "b) Una representación numérica de palabras en un espacio multidimensional donde palabras semánticamente similares están cercanas.",
+                explanation: "Los embeddings son vectores numéricos que representan palabras o frases de manera que capturan relaciones semánticas, colocando conceptos similares cerca unos de otros en el espacio vectorial."
+            },
+            {
+                question: "¿Qué caracteriza al aprendizaje no supervisado?",
+                options: [
+                    "a) El algoritmo aprende a partir de datos etiquetados donde conoce las respuestas correctas",
+                    "b) El algoritmo aprende identificando patrones en datos sin etiquetar",
+                    "c) El algoritmo recibe recompensas por sus acciones",
+                    "d) El algoritmo solo aprende mediante ejemplos negativos"
+                ],
+                correctAnswer: "b) El algoritmo aprende identificando patrones en datos sin etiquetar.",
+                explanation: "En el aprendizaje no supervisado, los algoritmos deben encontrar estructuras, patrones o relaciones en los datos por sí mismos, sin tener ejemplos etiquetados que indiquen las respuestas correctas."
+            },
+            {
+                question: "¿Cuál de estos es un modelo de IA generativa?",
+                options: [
+                    "a) Random Forest",
+                    "b) K-means",
+                    "c) ChatGPT",
+                    "d) Support Vector Machine"
+                ],
+                correctAnswer: "c) ChatGPT.",
+                explanation: "ChatGPT es un modelo generativo que puede crear nuevo contenido textual, mientras que Random Forest, K-means y Support Vector Machine son algoritmos tradicionales de clasificación o agrupación."
+            },
+            {
+                question: "¿Qué es un prompt en el contexto de la IA generativa?",
+                options: [
+                    "a) Un error crítico del sistema",
+                    "b) La instrucción o entrada que se da al modelo para guiar su generación de contenido",
+                    "c) El hardware donde se ejecuta el modelo",
+                    "d) El límite de tiempo que tiene el modelo para responder"
+                ],
+                correctAnswer: "b) La instrucción o entrada que se da al modelo para guiar su generación de contenido.",
+                explanation: "Un prompt es la entrada textual que se proporciona a un modelo generativo para dirigir qué tipo de respuesta o contenido debe generar, funcionando como una instrucción o solicitud."
+            },
+            {
+                question: "¿Qué es una API en el contexto de servicios de IA?",
+                options: [
+                    "a) Un tipo avanzado de procesador para ejecutar modelos",
+                    "b) Una interfaz de programación que permite a desarrolladores integrar capacidades de IA en sus aplicaciones",
+                    "c) Un algoritmo de predicción inteligente",
+                    "d) Una asociación profesional de investigadores de IA"
+                ],
+                correctAnswer: "b) Una interfaz de programación que permite a desarrolladores integrar capacidades de IA en sus aplicaciones.",
+                explanation: "Una API (Interfaz de Programación de Aplicaciones) permite que los desarrolladores accedan a las capacidades de un modelo de IA sin tener que implementarlo ellos mismos, facilitando su integración en diferentes aplicaciones."
+            },
+            {
+                question: "¿Qué son los deepfakes?",
+                options: [
+                    "a) Errores profundos en el funcionamiento de una IA",
+                    "b) Contenido sintético creado con IA que falsifica la apariencia o voz de personas reales",
+                    "c) Una técnica de entrenamiento para redes neuronales profundas",
+                    "d) Bases de datos muy grandes usadas para entrenar IA"
+                ],
+                correctAnswer: "b) Contenido sintético creado con IA que falsifica la apariencia o voz de personas reales.",
+                explanation: "Los deepfakes son contenidos multimedia generados por IA que manipulan o reemplazan la apariencia o voz de personas reales, creando situaciones o declaraciones falsas que pueden ser difíciles de distinguir de contenido auténtico."
+            },
+            {
+                question: "¿Qué diferencia a Claude de ChatGPT?",
+                options: [
+                    "a) Claude solo genera imágenes mientras que ChatGPT solo genera texto",
+                    "b) Son modelos de diferentes empresas (Anthropic vs. OpenAI) con distintos enfoques de diseño, entrenamiento y comportamiento",
+                    "c) Claude es gratuito mientras que ChatGPT siempre es de pago",
+                    "d) Claude solo funciona en dispositivos Apple"
+                ],
+                correctAnswer: "b) Son modelos de diferentes empresas (Anthropic vs. OpenAI) con distintos enfoques de diseño, entrenamiento y comportamiento.",
+                explanation: "Claude es desarrollado por Anthropic, mientras que ChatGPT es creado por OpenAI. Cada uno tiene diferentes filosofías de diseño, métodos de entrenamiento y comportamientos, aunque ambos son modelos de lenguaje avanzados."
+            },
+            {
+                question: "¿Qué es la tokenización en procesamiento de lenguaje natural?",
+                options: [
+                    "a) El proceso de convertir texto en unidades más pequeñas (tokens) que el modelo puede procesar",
+                    "b) La forma de proteger los datos personales en una conversación con IA",
+                    "c) Un método para limitar el uso de modelos de IA",
+                    "d) El reconocimiento facial en videos"
+                ],
+                correctAnswer: "a) El proceso de convertir texto en unidades más pequeñas (tokens) que el modelo puede procesar.",
+                explanation: "La tokenización divide el texto en piezas más pequeñas (tokens) como palabras, subpalabras o caracteres para que el modelo pueda procesarlas. Es un paso fundamental en el procesamiento del lenguaje natural."
+            },
+            {
+                question: "¿Qué problema ético representa principalmente el sesgo en los sistemas de IA?",
+                options: [
+                    "a) Hace que los modelos consuman demasiada energía",
+                    "b) Puede perpetuar o amplificar discriminaciones existentes contra ciertos grupos",
+                    "c) Reduce la velocidad de procesamiento",
+                    "d) Impide que los modelos generen imágenes de alta calidad"
+                ],
+                correctAnswer: "b) Puede perpetuar o amplificar discriminaciones existentes contra ciertos grupos.",
+                explanation: "Los sesgos en sistemas de IA pueden reforzar y amplificar discriminaciones existentes contra grupos específicos, reproduciendo desigualdades sociales en sus resultados y decisiones automatizadas."
+            },
+            {
+                question: "¿Qué es el prompt engineering?",
+                options: [
+                    "a) La construcción física de servidores para IA",
+                    "b) El arte y ciencia de diseñar instrucciones efectivas para obtener los mejores resultados de modelos de IA generativa",
+                    "c) Una carrera universitaria especializada en IA",
+                    "d) El proceso de programar nuevos modelos de lenguaje"
+                ],
+                correctAnswer: "b) El arte y ciencia de diseñar instrucciones efectivas para obtener los mejores resultados de modelos de IA generativa.",
+                explanation: "El prompt engineering consiste en diseñar y refinar instrucciones para modelos generativos que maximicen la calidad, relevancia y utilidad de sus respuestas, convirtiéndose en una habilidad crucial para trabajar con estas tecnologías."
+            },
+            {
+                question: "¿Qué es una ventaja principal de consumir servicios de IA mediante APIs?",
+                options: [
+                    "a) Siempre son gratuitas",
+                    "b) Permiten integrar capacidades de IA en aplicaciones existentes sin necesidad de desarrollar modelos propios",
+                    "c) No requieren conexión a internet",
+                    "d) Solo funcionan con sistemas operativos específicos"
+                ],
+                correctAnswer: "b) Permiten integrar capacidades de IA en aplicaciones existentes sin necesidad de desarrollar modelos propios.",
+                explanation: "Las APIs de IA permiten a los desarrolladores acceder a modelos potentes sin la necesidad de entrenarlos o mantenerlos, reduciendo significativamente las barreras técnicas y económicas para implementar funcionalidades de IA."
+            },
+            {
+                question: "¿Qué es un dataset en el contexto de la IA?",
+                options: [
+                    "a) Un tipo de red neuronal",
+                    "b) Un conjunto estructurado de datos utilizado para entrenar y evaluar modelos",
+                    "c) Un algoritmo de aprendizaje",
+                    "d) Un lenguaje de programación especializado"
+                ],
+                correctAnswer: "b) Un conjunto estructurado de datos utilizado para entrenar y evaluar modelos.",
+                explanation: "Un dataset es una colección de datos organizada que se usa para entrenar, validar y probar modelos de IA. La calidad y diversidad de estos datos son fundamentales para el rendimiento del modelo resultante."
+            },
+            {
+                question: "¿Cuál de estos NO es un modelo de IA generativa?",
+                options: [
+                    "a) DALL-E",
+                    "b) Gemini",
+                    "c) Random Forest",
+                    "d) Grok"
+                ],
+                correctAnswer: "c) Random Forest.",
+                explanation: "Random Forest es un algoritmo de aprendizaje tradicional usado principalmente para clasificación y regresión, mientras que DALL-E, Gemini y Grok son modelos generativos que pueden crear nuevo contenido."
+            },
+            {
+                question: "¿Cuál es una limitación común de los modelos de IA generativa actuales?",
+                options: [
+                    "a) Solo pueden generar texto en inglés",
+                    "b) Pueden generar información incorrecta pero presentada con confianza (alucinaciones)",
+                    "c) No pueden funcionar sin conexión a internet",
+                    "d) Solo funcionan en ordenadores de gama alta"
+                ],
+                correctAnswer: "b) Pueden generar información incorrecta pero presentada con confianza (alucinaciones).",
+                explanation: "Las 'alucinaciones' son un problema importante en modelos generativos, donde pueden producir información falsa o inexacta con el mismo nivel de confianza que la información correcta, dificultando la verificación."
+            },
+            {
+                question: "¿Qué es Deep Learning?",
+                options: [
+                    "a) Un algoritmo específico de Machine Learning",
+                    "b) Un subcampo del Machine Learning basado en redes neuronales con múltiples capas",
+                    "c) Una técnica exclusiva para procesamiento de texto",
+                    "d) Una rama de la programación"
+                ],
+                correctAnswer: "b) Un subcampo del Machine Learning basado en redes neuronales con múltiples capas.",
+                explanation: "El Deep Learning es una subdisciplina del Machine Learning que utiliza redes neuronales con muchas capas (profundas) para modelar relaciones complejas en los datos, permitiendo abstracciones de alto nivel."
+            },
+            {
+                question: "¿Qué tipos de contenido puede crear la IA generativa actual?",
+                options: [
+                    "a) Solo texto e imágenes",
+                    "b) Exclusivamente código de programación",
+                    "c) Texto, imágenes, audio, video y código",
+                    "d) Solo modelos 3D"
+                ],
+                correctAnswer: "c) Texto, imágenes, audio, video y código.",
+                explanation: "Los sistemas de IA generativa modernos pueden crear diversos tipos de contenido, incluyendo texto (artículos, historias), imágenes (arte, fotografías realistas), audio (música, voces), video (animaciones, clips) y código de programación."
+            },
+            {
+                question: "¿Qué caracteriza principalmente a un LLM (Large Language Model)?",
+                options: [
+                    "a) Es un modelo entrenado con enormes cantidades de texto para predecir y generar lenguaje",
+                    "b) Es un tipo de base de datos que almacena grandes cantidades de texto",
+                    "c) Es un hardware especializado para procesamiento de lenguaje",
+                    "d) Es una empresa que desarrolla tecnologías de IA"
+                ],
+                correctAnswer: "a) Es un modelo entrenado con enormes cantidades de texto para predecir y generar lenguaje.",
+                explanation: "Los LLMs son modelos neurales entrenados con vastas cantidades de datos textuales que aprenden patrones del lenguaje humano para generar texto coherente y contextualmente relevante a partir de entradas específicas."
+            }
+        ];
+
+        // Variables globales
+        let userAnswers = {};
+        
+        // Elementos del DOM
+        const questionsContainer = document.getElementById('questions-container');
+        const submitBtn = document.getElementById('submit-btn');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const scoreElement = document.getElementById('score');
+        const scoreTextElement = document.getElementById('score-text');
+        const showAnswersBtn = document.getElementById('show-answers-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const reviewContainer = document.getElementById('review-container');
+        
+        // Inicializar el cuestionario
+        function initQuiz() {
+            // Limpiar el contenedor de preguntas
+            questionsContainer.innerHTML = '';
+            userAnswers = {};
+            
+            // Generar HTML para cada pregunta
+            quizData.forEach((question, index) => {
+                const questionHTML = createQuestionHTML(question, index);
+                questionsContainer.innerHTML += questionHTML;
+            });
+            
+            // Añadir event listeners a los radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', handleAnswerSelection);
+            });
+            
+            // Comprobar si ya hay respuestas seleccionadas
+            checkAllAnswered();
+        }
+        
+        // Crear HTML para una pregunta
+        function createQuestionHTML(question, index) {
+            let optionsHTML = '';
+            
+            question.options.forEach((option, optionIndex) => {
+                const optionLetter = option.charAt(0);
+                optionsHTML += `
+                    <div class="option">
+                        <input type="radio" id="q${index}-${optionLetter}" name="question-${index}" value="${optionLetter}">
+                        <label for="q${index}-${optionLetter}">${option}</label>
+                    </div>
+                `;
+            });
+            
+            return `
+                <div class="question-container" data-question="${index}">
+                    <div class="question">${index + 1}. ${question.question}</div>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Manejar la selección de respuesta
+        function handleAnswerSelection(event) {
+            const questionIndex = event.target.name.split('-')[1];
+            const selectedOption = event.target.value;
+            
+            userAnswers[questionIndex] = selectedOption;
+            
+            checkAllAnswered();
+        }
+        
+        // Comprobar si todas las preguntas tienen respuesta
+        function checkAllAnswered() {
+            const allAnswered = quizData.every((_, index) => userAnswers[index] !== undefined);
+            submitBtn.disabled = !allAnswered;
+        }
+        
+        // Obtener la letra de la respuesta correcta
+        function getCorrectAnswerLetter(correctAnswer) {
+            const match = correctAnswer.match(/^([a-d])\)/);
+            return match ? match[1] : null;
+        }
+        
+        // Calcular puntuación
+        function calculateScore() {
+            let correctCount = 0;
+            
+            quizData.forEach((question, index) => {
+                const correctLetter = getCorrectAnswerLetter(question.correctAnswer);
+                if (userAnswers[index] === correctLetter) {
+                    correctCount++;
+                }
+            });
+            
+            return {
+                correctCount,
+                score: ((correctCount / quizData.length) * 10).toFixed(2)
+            };
+        }
+        
+        // Mostrar resultados
+        function showResults() {
+            const { correctCount, score } = calculateScore();
+            
+            scoreElement.textContent = `${score} / 10`;
+            scoreTextElement.textContent = `Has respondido correctamente ${correctCount} de ${quizData.length} preguntas.`;
+            
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+        }
+        
+        // Mostrar/ocultar revisión de respuestas
+        function toggleReviewAnswers() {
+            if (reviewContainer.classList.contains('hidden')) {
+                showReviewAnswers();
+                showAnswersBtn.textContent = 'Ocultar respuestas';
+            } else {
+                reviewContainer.classList.add('hidden');
+                showAnswersBtn.textContent = 'Ver respuestas correctas';
+            }
+        }
+        
+        // Mostrar revisión de respuestas
+        function showReviewAnswers() {
+            reviewContainer.innerHTML = '<h3>Revisión de respuestas</h3>';
+            
+            quizData.forEach((question, index) => {
+                const correctLetter = getCorrectAnswerLetter(question.correctAnswer);
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === correctLetter;
+                
+                let optionsHTML = '';
+                question.options.forEach(option => {
+                    const optionLetter = option.charAt(0);
+                    const isUserChoice = userAnswer === optionLetter;
+                    const isCorrectChoice = correctLetter === optionLetter;
+                    
+                    let optionClass = '';
+                    if (isCorrectChoice) {
+                        optionClass = 'option-correct';
+                    } else if (isUserChoice) {
+                        optionClass = 'option-user-incorrect';
+                    }
+                    
+                    let indicator = '';
+                    if (isCorrectChoice) {
+                        indicator = ' <span>(✓ Correcta)</span>';
+                    } else if (isUserChoice) {
+                        indicator = ' <span>(✗ Tu respuesta)</span>';
+                    }
+                    
+                    optionsHTML += `
+                        <div class="option-result ${optionClass}">
+                            ${option}${indicator}
+                        </div>
+                    `;
+                });
+                
+                const feedbackHTML = isCorrect
+                    ? '<p class="feedback feedback-correct">¡Respuesta correcta!</p>'
+                    : `<p class="feedback feedback-incorrect">Respuesta incorrecta. La respuesta correcta es: ${question.correctAnswer}</p>`;
+                
+                const explanationHTML = `<div class="explanation">${question.explanation}</div>`;
+                
+                reviewContainer.innerHTML += `
+                    <div class="review-question ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="question">${index + 1}. ${question.question}</div>
+                        <div class="options">
+                            ${optionsHTML}
+                        </div>
+                        ${feedbackHTML}
+                        ${explanationHTML}
+                    </div>
+                `;
+            });
+            
+            reviewContainer.classList.remove('hidden');
+        }
+        
+        // Reiniciar el cuestionario
+        function resetQuiz() {
+            userAnswers = {};
+            resultsScreen.classList.add('hidden');
+            reviewContainer.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            showAnswersBtn.textContent = 'Ver respuestas correctas';
+            
+            // Desmarcar todos los radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+            
+            submitBtn.disabled = true;
+        }
+        
+        // Event listeners
+        submitBtn.addEventListener('click', showResults);
+        showAnswersBtn.addEventListener('click', toggleReviewAnswers);
+        retryBtn.addEventListener('click', resetQuiz);
+        
+        // Iniciar el cuestionario
+        initQuiz();
+    </script>
+</body>
+</html>
